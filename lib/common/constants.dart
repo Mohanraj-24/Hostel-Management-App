@@ -1,4 +1,4 @@
-String uri = 'http://10.16.50.36:3000';
+String uri = 'http://0.0.0.0:3000';
 class AppConstants {
   static const appName = 'Hostel Management';
 
