@@ -1,6 +1,6 @@
 String uri = 'http://0.0.0.0:3000';
 class AppConstants {
-  static const appName = 'Hostel Management';
+  static const appName = 'Hostel Management App';
 
 // assets
   static const logo = 'assets/logo.jpg';
