@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_management/api_services/api_calls.dart';
@@ -16,8 +17,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  static final GlobalKey<FormState> _formKeyRegister = GlobalKey<FormState>();
 
+  TextEditingController rollNo = TextEditingController();
   TextEditingController userName = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -47,6 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void signUpUser() {
     authService.signUp(
+      rollNo : rollNo.text,
       userName: userName.text,
       firstName: firstName.text,
       lastName: lastName.text,
@@ -68,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
           child: Form(
-            key: _formKey,
+            key: _formKeyRegister,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -91,6 +94,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                ),
+                heightSpacer(25),
+                Text('Roll No', style: AppTextTheme.kLabelStyle),
+                CustomTextField(
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Roll No is required';
+                    }
+                    return null;
+                  },
+                  controller: rollNo,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD1D8FF)),
+                      borderRadius: BorderRadius.circular(14)),
                 ),
                 heightSpacer(25),
                 Text('Username', style: AppTextTheme.kLabelStyle),
@@ -280,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     //   });
 
                     // }
-                    if (_formKey.currentState!.validate()) {
+                    if (_formKeyRegister.currentState!.validate()) {
                       print('validated');
                       signUpUser();
                       // await apiCall.registerStudent(

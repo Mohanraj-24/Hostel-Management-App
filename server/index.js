@@ -7,7 +7,7 @@ const { Mongoose, mongo, default: mongoose } = require('mongoose');
 
 //init
 const app = express();
-const PORT = 4000;
+const PORT = 3000;
 const DB = "mongodb+srv://Mohanraj:Mohan2004@cluster0.ogcmvth.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 app.use(express.json());
@@ -20,6 +20,6 @@ mongoose.connect(DB).then( () =>{
     console.log(e);
 });
 
-app.listen(PORT, "0.0.0.0" ,() => {
+app.listen(PORT, "10.16.50.36" ,() => {
     console.log(`Listening at ${PORT}`)
 });

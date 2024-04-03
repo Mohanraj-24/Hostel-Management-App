@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_management/api_services/api_calls.dart';
 import 'package:hostel_management/common/spacing.dart';
 import 'package:hostel_management/features/auth/screens/register_screen.dart';
+import 'package:hostel_management/features/auth/services/auth_service.dart';
 import 'package:hostel_management/features/auth/widgets/custom_button.dart';
 import 'package:hostel_management/features/auth/widgets/custom_text_field.dart';
 import 'package:hostel_management/theme/colors.dart';
@@ -31,9 +32,10 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
-  static final _formKey = GlobalKey<FormState>();
+  static final _formKeyLogin = GlobalKey<FormState>();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  final AuthService authService = AuthService();
   ApiCall apiCall = ApiCall();
   @override
   void dispose() {
@@ -42,13 +44,21 @@ class _LoginBodyState extends State<LoginBody> {
     super.dispose();
   }
 
+  void signInUser(){
+    authService.signInUser(
+      email : email.text,
+      password: password.text,
+      context: context,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
         child: Form(
-          key: _formKey,
+          key: _formKeyLogin,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -107,10 +117,11 @@ class _LoginBodyState extends State<LoginBody> {
               CustomButton(
                 buttonText: "Login",
                 press: () async {
-                  if (_formKey.currentState!.validate()) {
-                    await apiCall.handleLogin(
-                        context, email.text, password.text);
-                    print('validated');
+                  if (_formKeyLogin.currentState!.validate()) {
+                    // await apiCall.handleLogin(
+                    //     context, email.text, password.text);
+                    // print('validated');
+                    signInUser();
                   }
                 },
               ),
@@ -158,6 +169,6 @@ class _LoginBodyState extends State<LoginBody> {
   //   await prefs.setString('token', token);
   // }
 
-  final emailRegex =
-      RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*(\.[a-z]{2,})$');
+  // final emailRegex =
+  //     RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*(\.[a-z]{2,})$');
 }

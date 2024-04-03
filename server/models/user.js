@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
+    rollNo:{
+        required : true,
+        type : String,
+        trim : true
+    },
     userName:{
         required : true,
         type : String,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +17,8 @@ import 'package:hostel_management/features/student/screens/profile_screen.dart';
 import 'package:hostel_management/features/student/screens/raise_issue_screen.dart';
 import 'package:hostel_management/features/student/screens/room_availability.dart';
 import 'package:hostel_management/models/student_info_model.dart';
+import 'package:hostel_management/models/user.dart';
+import 'package:hostel_management/providers/user_provider.dart';
 import 'package:hostel_management/theme/colors.dart';
 import 'package:hostel_management/theme/text_theme.dart';
 import 'package:hostel_management/widgets/category_card.dart';
@@ -31,41 +34,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  StudentInfoModel? studentInfoModel;
+  User? studentInfoModel;
 
   List<ChartData>? _chartData;
 
   Future<void> fetchStudentDetails(String emailId) async {
     try {
-      final apiProvider = Provider.of<ApiProvider>(context, listen: false);
-      final studentInfo =
-          await apiProvider.getRequest('${ApiUrls.studentDetails}$emailId');
-
-      if (studentInfo.statusCode == 200) {
-        final Map<String, dynamic> room = json.decode(studentInfo.body);
-        print(studentInfo.body);
-
-        studentInfoModel = StudentInfoModel.fromJson(room);
-        ApiUrls.email = studentInfoModel!.result[0].studentProfileData.emailId;
+      final userProvider = Provider.of<UserProvider>(context, listen: false).user;
+        studentInfoModel = userProvider;
+        ApiUrls.email = studentInfoModel!.email;
         ApiUrls.phoneNumber = studentInfoModel!
-            .result[0].studentProfileData.phoneNumber
-            .toString();
+            .phoneNumber;
         ApiUrls.roomNumber = studentInfoModel!
-            .result[0].studentProfileData.roomNumber
-            .toString();
+            .roomNo;
         ApiUrls.username =
-            studentInfoModel!.result[0].studentProfileData.userName;
+            studentInfoModel!.userName;
         ApiUrls.blockNumber =
-            studentInfoModel!.result[0].studentProfileData.block;
+            studentInfoModel!.block;
         ApiUrls.firstName =
-            studentInfoModel!.result[0].studentProfileData.firstName;
+            studentInfoModel!.firstName;
         ApiUrls.lastName =
-            studentInfoModel!.result[0].studentProfileData.lastName;
-        ApiUrls.roleId =
-            studentInfoModel!.result[0].studentProfileData.roleId.roleId;
-      } else {
-        print('Failed to fetch data');
-      }
+            studentInfoModel!.lastName;
+        // ApiUrls.roleId =
+        //     studentInfoModel!.result[0].studentProfileData.roleId.roleId;
     } catch (e) {
       print('Error: $e');
     }
@@ -114,8 +105,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    fetchStudentDetails(ApiUrls.email);
     fetchPieChartData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchStudentDetails(ApiUrls.email);
   }
 
   @override
@@ -140,34 +136,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   CupertinoPageRoute(
                     builder: (context) => ProfileScreen(
-                      roomNumber: studentInfoModel
-                              ?.result[0].studentProfileData.roomNumber
-                              .toString() ??
-                          "No Data",
-                      blockNumber: studentInfoModel
-                              ?.result[0].studentProfileData.block
-                              .toString() ??
-                          "No Data",
-                      username: studentInfoModel
-                              ?.result[0].studentProfileData.userName
-                              .toString() ??
-                          "No Data",
-                      emailId: studentInfoModel
-                              ?.result[0].studentProfileData.emailId
-                              .toString() ??
-                          "No Data",
-                      phoneNumber: studentInfoModel
-                              ?.result[0].studentProfileData.phoneNumber
-                              .toString() ??
-                          "No Data",
-                      firstName: studentInfoModel
-                              ?.result[0].studentProfileData.firstName
-                              .toString() ??
-                          "No Data",
-                      lastName: studentInfoModel
-                              ?.result[0].studentProfileData.lastName
-                              .toString() ??
-                          "No Data",
+                      roomNumber: studentInfoModel!.roomNo,
+                      blockNumber: studentInfoModel!.block,
+                      username: studentInfoModel!.userName,
+                      emailId: studentInfoModel!.email,
+                      phoneNumber: studentInfoModel!.phoneNumber,
+                      firstName: studentInfoModel!.firstName,
+                      lastName: studentInfoModel!.lastName,
                     ),
                   ),
                 );
@@ -361,58 +336,55 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                         ),
-                        CategoryCard(
-                          category: 'Hostel\nFee',
-                          image: AppConstants.hostelFee,
-                          onTap: () {
-                            ApiUrls.roleId != 2
-                                ? () {}
-                                : Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => HostelFee(
-                                        blockNumber: studentInfoModel!
-                                            .result[0].studentProfileData.block,
-                                        roomNumber: studentInfoModel!.result[0]
-                                            .studentProfileData.roomNumber
-                                            .toString(),
-                                        maintenanceCharge: studentInfoModel!
-                                            .result[0]
-                                            .roomChargesModel
-                                            .maintenanceCharges
-                                            .toString(),
-                                        parkingCharge: studentInfoModel!
-                                            .result[0]
-                                            .roomChargesModel
-                                            .parkingCharges
-                                            .toString(),
-                                        waterCharge: studentInfoModel!.result[0]
-                                            .roomChargesModel.roomWaterCharges
-                                            .toString(),
-                                        roomCharge: studentInfoModel!.result[0]
-                                            .roomChargesModel.roomAmount
-                                            .toString(),
-                                        totalCharge: studentInfoModel!.result[0]
-                                            .roomChargesModel.totalAmount
-                                            .toString(),
-                                      ),
-                                    ),
-                                  );
-                          },
-                        ),
-                        CategoryCard(
-                          category: 'Change\nRequests',
-                          image: AppConstants.roomChange,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (context) =>
-                                    const RoomChangeRequestScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                        // CategoryCard(
+                        //   category: 'Hostel\nFee',
+                        //   image: AppConstants.hostelFee,
+                        //   onTap: () {
+                        //     ApiUrls.roleId != 2
+                        //         ? () {}
+                        //         : Navigator.push(
+                        //             context,
+                        //             CupertinoPageRoute(
+                        //               builder: (context) => HostelFee(
+                        //                 blockNumber: studentInfoModel!.block,
+                        //                 roomNumber: studentInfoModel!.roomNo,
+                        //               //   maintenanceCharge: studentInfoModel!
+                        //               //       .result[0]
+                        //               //       .roomChargesModel
+                        //               //       .maintenanceCharges
+                        //               //       .toString(),
+                        //               //   parkingCharge: studentInfoModel!
+                        //               //       .result[0]
+                        //               //       .roomChargesModel
+                        //               //       .parkingCharges
+                        //               //       .toString(),
+                        //               //   waterCharge: studentInfoModel!.result[0]
+                        //               //       .roomChargesModel.roomWaterCharges
+                        //               //       .toString(),
+                        //               //   roomCharge: studentInfoModel!.result[0]
+                        //               //       .roomChargesModel.roomAmount
+                        //               //       .toString(),
+                        //               //   totalCharge: studentInfoModel!.result[0]
+                        //               //       .roomChargesModel.totalAmount
+                        //               //       .toString(),
+                        //               // ),
+                        //           //   ),
+                        //           // );
+                        //   },
+                        // ),
+                        // CategoryCard(
+                        //   category: 'Change\nRequests',
+                        //   image: AppConstants.roomChange,
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       CupertinoPageRoute(
+                        //         builder: (context) =>
+                        //             const RoomChangeRequestScreen(),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
                       ],
                     ),
                     heightSpacer(20),

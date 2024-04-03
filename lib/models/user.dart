@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class User {
+  final String rollNo;
   final String id;
   final String userName;
   final String firstName;
@@ -16,6 +17,7 @@ class User {
 
   User({
     required this.id,
+    required this.rollNo,
     required this.userName,
     required this.firstName,
     required this.lastName,
@@ -32,6 +34,7 @@ class User {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'rollNo' : rollNo,
       'userName': userName,
       'firstName': firstName,
       'lastName': lastName,
@@ -49,6 +52,7 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['_id'] ?? '',
+      rollNo : map['rollNo'] ?? '',
       userName: map['userName'] ?? '',
       firstName: map['firstName'] ?? '',
       lastName: map['lastName'] ?? '',
@@ -73,6 +77,7 @@ class User {
 
   User copyWith({
     String? id,
+    String? rollNo,
     String? userName,
     String? firstName,
     String? lastName,
@@ -86,6 +91,7 @@ class User {
   }) {
     return User(
       id: id ?? this.id,
+      rollNo : rollNo ?? this.rollNo,
       userName: userName ?? this.userName,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
