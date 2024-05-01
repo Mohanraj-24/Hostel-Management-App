@@ -27,6 +27,7 @@ class ApiUrls {
   static String firstName = '';
   static String lastName = '';
   static String phoneNumber = '';
+  static String rollNo = '';
   static int? roleId;
 }
 

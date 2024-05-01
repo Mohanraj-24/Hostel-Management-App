@@ -4,17 +4,29 @@ import 'package:hostel_management/theme/colors.dart';
 import 'package:hostel_management/theme/text_theme.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({
+  CustomButton({
     super.key,
     this.buttonText,
     this.buttonTextColor,
     required this.press,
     this.size,
+    this.flag,
   });
   final String? buttonText;
   final Color? buttonTextColor;
   final Function() press;
   final double? size;
+  final bool? flag;
+
+  final BoxDecoration boxDecor1 = BoxDecoration(
+    border: Border.all(color: const Color(0xFF2E8B57), width: 2),
+    borderRadius: BorderRadius.circular(14.r),
+  );
+
+  final BoxDecoration boxDecor2 = BoxDecoration(
+    color: const Color(0xFF2E8B57),
+    borderRadius: BorderRadius.circular(14.r),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +35,12 @@ class CustomButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 50,
-        decoration: BoxDecoration(
-          color: const Color(0xFF2E8B57),
-          borderRadius: BorderRadius.circular(14.r),
-        ),
+        decoration: flag! ? boxDecor1 : boxDecor2,
         child: Center(
           child: Text(
             buttonText ?? " ",
             style: AppTextTheme.kLabelStyle.copyWith(
-                color: buttonTextColor ?? AppColors.kLight,
+                color: flag! ? Color(0xFF2E8B57) : AppColors.kLight,
                 fontSize: size ?? 16),
           ),
         ),

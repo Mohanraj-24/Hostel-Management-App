@@ -1,0 +1,48 @@
+# POST http://192.168.27.150:3000/api/signup
+# Content-Type: application/json; charset=UTF-8
+
+# {
+#   "rollNo": "2021103562",
+#   "firstName": "Raja",
+#   "lastName": "S",
+#   "phoneNumber": "9876544321",
+#   "email": "raja@gmail.com",
+#   "password": "raja2004",
+#   "block": "A",
+#   "roomNo": "101",
+#   "address": " ",
+#   "type": " ",
+#   "faceData1": "",
+#   "faceData2": "",
+#   "faceData3": ""
+# }
+
+
+
+# POST http://10.16.49.119:3000/api/signin
+# Content-Type: application/json; charset=UTF-8
+
+# {
+#   "rollNo": "2021103562",
+#   "password": "raja2004"
+# }
+
+##
+
+
+# GET http://10.16.49.119:3000/api/getUserData
+# Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xsTm8iOiIyMDIxMTAzNTYyIiwiaWF0IjoxNzE0MzI4OTMxfQ.y5sQxfeZ305T4qRfGW3GVEWnzmTtAtfsZzisBGCu-rU
+# Content-Type: application/json
+
+
+POST http://10.16.49.119:3000/api/addAttendance
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xsTm8iOiIyMDIxMTAzNTYyIiwiaWF0IjoxNzE0NTAyOTAxfQ.LF-2HMz8H0DZK-ekn89jClx4X8DWxKUahqGhR_NURgU
+Content-Type: application/json
+
+{
+    "dateTime": "2024-05-01T08:00:00Z"
+}
+
+
+
+

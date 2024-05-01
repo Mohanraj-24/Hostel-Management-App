@@ -1,4 +1,5 @@
-String uri = 'http://0.0.0.0:3000';
+String uri = 'http://10.16.49.119:3000'; //192.168.27.150
+
 class AppConstants {
   static const appName = 'Hostel Management App';
 // assets
@@ -14,6 +15,7 @@ class AppConstants {
   static const hostel = 'assets/hostel.svg';
   static const staffMember = 'assets/all_staff.png';
   static const roomChange = 'assets/change_requests.png';
+  static const faceImage = 'assets/face_attendence.png';
 
   //svg function
 }

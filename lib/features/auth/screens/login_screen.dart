@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: Center(child: LoginBody()),
     );
@@ -33,20 +33,21 @@ class LoginBody extends StatefulWidget {
 
 class _LoginBodyState extends State<LoginBody> {
   static final _formKeyLogin = GlobalKey<FormState>();
-  TextEditingController email = TextEditingController();
+  TextEditingController rollNo = TextEditingController();
   TextEditingController password = TextEditingController();
   final AuthService authService = AuthService();
   ApiCall apiCall = ApiCall();
+  bool _obscureText = true;
   @override
   void dispose() {
-    email.dispose();
+    rollNo.dispose();
     password.dispose();
     super.dispose();
   }
 
-  void signInUser(){
+  void signInUser() {
     authService.signInUser(
-      email : email.text,
+      rollNo: rollNo.text,
       password: password.text,
       context: context,
     );
@@ -81,12 +82,12 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
               ),
               heightSpacer(25.h),
-              Text('Email', style: AppTextTheme.kLabelStyle),
+              Text('Roll Number', style: AppTextTheme.kLabelStyle),
               CustomTextField(
-                controller: email,
+                controller: rollNo,
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Email is required';
+                    return 'Roll Number is required';
                   }
                   // else if (!emailRegex.hasMatch(value)) {
                   //   return 'Invalid email address';
@@ -96,12 +97,22 @@ class _LoginBodyState extends State<LoginBody> {
                 enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(color: Color(0xFFD1D8FF)),
                     borderRadius: BorderRadius.circular(14)),
-                inputHint: "Enter your email",
+                inputHint: "Enter your roll number",
               ),
               heightSpacer(30),
               Text('Password', style: AppTextTheme.kLabelStyle),
               CustomTextField(
+                obscureText: _obscureText,
                 controller: password,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Password is required';
@@ -124,13 +135,14 @@ class _LoginBodyState extends State<LoginBody> {
                     signInUser();
                   }
                 },
+                flag: false,
               ),
               heightSpacer(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Didn’t have an account?",
+                    "Don’t have an account?",
                     style: AppTextTheme.kLabelStyle.copyWith(
                       color: AppColors.kGreyDk,
                       fontSize: 14,
@@ -142,7 +154,7 @@ class _LoginBodyState extends State<LoginBody> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
+                          builder: (context) => RegisterScreen(),
                         ),
                       );
                     },

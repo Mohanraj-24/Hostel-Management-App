@@ -16,7 +16,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextStyle? hintStyle;
   final Function(String)? onChanged;
-
+  final bool showPassword;
   const CustomTextField({
     super.key,
     this.inputHint,
@@ -35,6 +35,7 @@ class CustomTextField extends StatelessWidget {
     this.focusedBorder,
     this.enabledBorder,
     this.onChanged,
+    this.showPassword = false,
   });
 
   @override

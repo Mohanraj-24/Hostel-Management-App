@@ -6,11 +6,11 @@ import 'package:hostel_management/api_services/api_calls.dart';
 import 'package:hostel_management/api_services/api_utils.dart';
 import 'package:hostel_management/common/constants.dart';
 import 'package:hostel_management/common/spacing.dart';
-import 'package:hostel_management/features/auth/screens/login_screen.dart';
 import 'package:hostel_management/features/auth/widgets/custom_button.dart';
 import 'package:hostel_management/features/auth/widgets/custom_text_field.dart';
 import 'package:hostel_management/theme/colors.dart';
 import 'package:hostel_management/theme/text_theme.dart';
+import 'package:hostel_management/features/auth/services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String roomNumber;
@@ -44,6 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
   ApiCall apiCall = ApiCall();
+  final AuthService authService = AuthService();
   @override
   void dispose() {
     super.dispose();
@@ -81,12 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.only(right: 20.0),
             child: InkWell(
               onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
+                authService.signOut(context);
               },
               child: const Icon(
                 Icons.logout,
@@ -213,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             child: Text(
-                              widget.emailId,
+                              widget.username,
                               style: TextStyle(
                                 color: AppColors.kSecondaryColor,
                                 fontSize: 17.sp,
@@ -227,7 +223,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     heightSpacer(20),
                     CustomTextField(
                       controller: username,
-                      inputHint: widget.username,
+                      inputHint: widget.emailId,
                       prefixIcon: const Icon(Icons.person_2_outlined),
                     ),
                     // CustomTextField(
@@ -270,6 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           phoneNumber.text,
                         );
                       },
+                      flag: false,
                       buttonText: 'Save',
                     )
                   ],

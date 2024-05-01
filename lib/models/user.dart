@@ -3,7 +3,6 @@ import 'dart:convert';
 class User {
   final String rollNo;
   final String id;
-  final String userName;
   final String firstName;
   final String lastName;
   final String email;
@@ -13,12 +12,14 @@ class User {
   final String type;
   final String block;
   final String roomNo;
+  final String faceData1;
+  final String faceData2;
+  final String faceData3;
   //final List<dynamic> cart;
 
   User({
     required this.id,
     required this.rollNo,
-    required this.userName,
     required this.firstName,
     required this.lastName,
     required this.email,
@@ -28,23 +29,28 @@ class User {
     required this.type,
     required this.block,
     required this.roomNo,
+    required this.faceData1,
+    required this.faceData2,
+    required this.faceData3,
     //required this.cart,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'rollNo' : rollNo,
-      'userName': userName,
+      'rollNo': rollNo,
       'firstName': firstName,
       'lastName': lastName,
       'email': email,
       'password': password,
       'address': address,
-      'phoneNumber':phoneNumber,
+      'phoneNumber': phoneNumber,
       'type': type,
-      'block' : block,
-      'roomNo' : roomNo,
+      'block': block,
+      'roomNo': roomNo,
+      'faceData1': faceData1,
+      'faceData2': faceData2,
+      'faceData3': faceData3,
       //'cart': cart,
     };
   }
@@ -52,8 +58,7 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['_id'] ?? '',
-      rollNo : map['rollNo'] ?? '',
-      userName: map['userName'] ?? '',
+      rollNo: map['rollNo'] ?? '',
       firstName: map['firstName'] ?? '',
       lastName: map['lastName'] ?? '',
       email: map['email'] ?? '',
@@ -61,8 +66,11 @@ class User {
       address: map['address'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
       type: map['type'] ?? '',
-      block : map['block'] ?? '',
-      roomNo : map['block'] ?? '',
+      block: map['block'] ?? '',
+      roomNo: map['roomNo'] ?? '',
+      faceData1: map['faceData1'] ?? '',
+      faceData2: map['faceData2'] ?? '',
+      faceData3: map['faceData3'] ?? '',
       // cart: List<Map<String, dynamic>>.from(
       //   map['cart']?.map(
       //     (x) => Map<String, dynamic>.from(x),
@@ -78,7 +86,6 @@ class User {
   User copyWith({
     String? id,
     String? rollNo,
-    String? userName,
     String? firstName,
     String? lastName,
     String? email,
@@ -88,11 +95,13 @@ class User {
     String? type,
     String? block,
     String? roomNo,
+    String? faceData1,
+    String? faceData2,
+    String? faceData3,
   }) {
     return User(
       id: id ?? this.id,
-      rollNo : rollNo ?? this.rollNo,
-      userName: userName ?? this.userName,
+      rollNo: rollNo ?? this.rollNo,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
@@ -100,8 +109,11 @@ class User {
       address: address ?? this.address,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       type: type ?? this.type,
-      block : block ?? this.block,
-      roomNo : roomNo ?? this.roomNo,
+      block: block ?? this.block,
+      roomNo: roomNo ?? this.roomNo,
+      faceData1: faceData1 ?? this.faceData1,
+      faceData2: faceData2 ?? this.faceData2,
+      faceData3: faceData2 ?? this.faceData3,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+// import 'dart:js';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:hostel_management/features/admin/screens/create_staff.dart';
 import 'package:hostel_management/features/admin/screens/issue_details_screen.dart';
 import 'package:hostel_management/features/admin/screens/room_change_requests_screen.dart';
 import 'package:hostel_management/features/admin/screens/staff_display_screen.dart';
+import 'package:hostel_management/features/auth/services/auth_service.dart';
 import 'package:hostel_management/features/student/screens/hostel_fees.dart';
 import 'package:hostel_management/features/student/screens/profile_screen.dart';
 import 'package:hostel_management/features/student/screens/raise_issue_screen.dart';
@@ -19,6 +21,7 @@ import 'package:hostel_management/features/student/screens/room_availability.dar
 import 'package:hostel_management/models/student_info_model.dart';
 import 'package:hostel_management/models/user.dart';
 import 'package:hostel_management/providers/user_provider.dart';
+import 'package:hostel_management/register_face.dart';
 import 'package:hostel_management/theme/colors.dart';
 import 'package:hostel_management/theme/text_theme.dart';
 import 'package:hostel_management/widgets/category_card.dart';
@@ -35,83 +38,36 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User? studentInfoModel;
+  AuthService authService = AuthService();
 
-  List<ChartData>? _chartData;
-
-  Future<void> fetchStudentDetails(String emailId) async {
+  void fetchUserData(context) async {
+    print("fetched data context: $context");
     try {
-      final userProvider = Provider.of<UserProvider>(context, listen: false).user;
+      await authService.getUserData(context);
+      final userProvider =
+          Provider.of<UserProvider>(context, listen: false).user;
+      print(userProvider.phoneNumber);
+      setState(() {
         studentInfoModel = userProvider;
-        ApiUrls.email = studentInfoModel!.email;
-        ApiUrls.phoneNumber = studentInfoModel!
-            .phoneNumber;
-        ApiUrls.roomNumber = studentInfoModel!
-            .roomNo;
-        ApiUrls.username =
-            studentInfoModel!.userName;
-        ApiUrls.blockNumber =
-            studentInfoModel!.block;
-        ApiUrls.firstName =
-            studentInfoModel!.firstName;
-        ApiUrls.lastName =
-            studentInfoModel!.lastName;
-        // ApiUrls.roleId =
-        //     studentInfoModel!.result[0].studentProfileData.roleId.roleId;
+      });
+      print(studentInfoModel?.phoneNumber);
+      ApiUrls.rollNo = studentInfoModel!.rollNo;
+      ApiUrls.email = studentInfoModel!.email;
+      ApiUrls.phoneNumber = studentInfoModel!.phoneNumber;
+      ApiUrls.roomNumber = studentInfoModel!.roomNo;
+      ApiUrls.blockNumber = studentInfoModel!.block;
+      ApiUrls.firstName = studentInfoModel!.firstName;
+      ApiUrls.lastName = studentInfoModel!.lastName;
+      print("first name ${ApiUrls.firstName}");
     } catch (e) {
       print('Error: $e');
-    }
-  }
-
-  Future<void> fetchPieChartData() async {
-    try {
-      final response = await http.get(
-        Uri.parse('${ApiUrls.baseUrl}${ApiUrls.fetchPieChartData}'),
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final roomChangeChart = data['result'][0]['roomChangeIssueChart'];
-
-        setState(() {
-          _chartData = [
-            ChartData(
-                label: 'Approved',
-                value: roomChangeChart['totalRoomChangeRequestsApproved']
-                    .toDouble(),
-                color: Colors.green),
-            ChartData(
-                label: 'Rejected',
-                value: roomChangeChart['totalRoomChangeRequestsRejected']
-                    .toDouble(),
-                color: Colors.red),
-            ChartData(
-                label: 'Pending',
-                value: (roomChangeChart['totalNumberRoomChangeRequest'] -
-                        roomChangeChart['totalRoomChangeRequestsApproved'] -
-                        roomChangeChart['totalRoomChangeRequestsRejected'])
-                    .toDouble(),
-                color: Colors.grey),
-          ];
-        });
-      } else {
-        throw Exception('Failed to fetch data');
-      }
-    } catch (e) {
-      print('Error: $e');
-      // Handle error appropriately
     }
   }
 
   @override
   void initState() {
     super.initState();
-    fetchPieChartData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchStudentDetails(ApiUrls.email);
+    fetchUserData(context);
   }
 
   @override
@@ -138,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => ProfileScreen(
                       roomNumber: studentInfoModel!.roomNo,
                       blockNumber: studentInfoModel!.block,
-                      username: studentInfoModel!.userName,
+                      username: studentInfoModel!.rollNo,
                       emailId: studentInfoModel!.email,
                       phoneNumber: studentInfoModel!.phoneNumber,
                       firstName: studentInfoModel!.firstName,
@@ -325,93 +281,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         CategoryCard(
-                          category: 'Create\nStaff',
-                          image: AppConstants.createStaff,
+                          category: 'Mark\nAttendence',
+                          image: AppConstants.faceImage,
                           onTap: () {
                             Navigator.push(
                               context,
                               CupertinoPageRoute(
-                                builder: (context) => const CreateStaff(),
+                                builder: (context) => MyHomePage(
+                                  title: "Face Authorization",
+                                ),
                               ),
                             );
                           },
                         ),
-                        // CategoryCard(
-                        //   category: 'Hostel\nFee',
-                        //   image: AppConstants.hostelFee,
-                        //   onTap: () {
-                        //     ApiUrls.roleId != 2
-                        //         ? () {}
-                        //         : Navigator.push(
-                        //             context,
-                        //             CupertinoPageRoute(
-                        //               builder: (context) => HostelFee(
-                        //                 blockNumber: studentInfoModel!.block,
-                        //                 roomNumber: studentInfoModel!.roomNo,
-                        //               //   maintenanceCharge: studentInfoModel!
-                        //               //       .result[0]
-                        //               //       .roomChargesModel
-                        //               //       .maintenanceCharges
-                        //               //       .toString(),
-                        //               //   parkingCharge: studentInfoModel!
-                        //               //       .result[0]
-                        //               //       .roomChargesModel
-                        //               //       .parkingCharges
-                        //               //       .toString(),
-                        //               //   waterCharge: studentInfoModel!.result[0]
-                        //               //       .roomChargesModel.roomWaterCharges
-                        //               //       .toString(),
-                        //               //   roomCharge: studentInfoModel!.result[0]
-                        //               //       .roomChargesModel.roomAmount
-                        //               //       .toString(),
-                        //               //   totalCharge: studentInfoModel!.result[0]
-                        //               //       .roomChargesModel.totalAmount
-                        //               //       .toString(),
-                        //               // ),
-                        //           //   ),
-                        //           // );
-                        //   },
-                        // ),
-                        // CategoryCard(
-                        //   category: 'Change\nRequests',
-                        //   image: AppConstants.roomChange,
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       CupertinoPageRoute(
-                        //         builder: (context) =>
-                        //             const RoomChangeRequestScreen(),
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
                       ],
                     ),
                     heightSpacer(20),
                   ],
                 ),
               ),
-              _chartData == null
-                  ? const CircularProgressIndicator()
-                  : ApiUrls.roleId == 2 || ApiUrls.roleId == 3
-                      ? const SizedBox.shrink()
-                      : SfCircularChart(
-                          series: <CircularSeries>[
-                            PieSeries<ChartData, String>(
-                              dataSource: _chartData,
-                              pointColorMapper: (ChartData data, _) =>
-                                  data.color,
-                              xValueMapper: (ChartData data, _) => data.label,
-                              yValueMapper: (ChartData data, _) => data.value,
-                              dataLabelMapper: (ChartData data, _) =>
-                                  '${data.label}\n${data.value}',
-                              dataLabelSettings: const DataLabelSettings(
-                                isVisible: true,
-                                labelPosition: ChartDataLabelPosition.outside,
-                              ),
-                            ),
-                          ],
-                        ),
             ],
           ),
         ),

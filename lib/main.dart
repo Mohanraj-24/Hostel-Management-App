@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hostel_management/features/auth/screens/login_screen.dart';
+import 'package:hostel_management/features/home/screens/home_screen.dart';
 import 'package:hostel_management/features/auth/services/auth_service.dart';
 import 'package:hostel_management/providers/user_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   final bool isUserLoggedIn;
+
   const MyApp({super.key, this.isUserLoggedIn = false});
 
   @override
@@ -27,12 +29,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthService authService = AuthService();
+  late bool isLoggedIn;
 
   @override
   void initState() {
     super.initState();
-    authService.getUserData(context);
+    checkUserLoggedIn().then((value) => setState(() => isLoggedIn = value));
+    ;
+    // authService.getUserData(context);
   }
+
+  Future<bool> checkUserLoggedIn() async {
+    isLoggedIn = await authService.isUserLoggedIn(context);
+    return isLoggedIn;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -48,12 +59,12 @@ class _MyAppState extends State<MyApp> {
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
-          final ThemeData theme = ThemeData();
+          // final ThemeData theme = ThemeData();
 
-          return const MaterialApp(
+          return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'MyApp',
-            home: LoginScreen(),
+            home: isLoggedIn ? const HomeScreen() : const LoginScreen(),
           );
         },
       ),

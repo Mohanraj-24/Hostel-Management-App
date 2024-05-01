@@ -245,6 +245,7 @@ class _RaiseIssueScreenState extends State<RaiseIssueScreen> {
                       );
                     }
                   },
+                  flag: false,
                 ),
                 heightSpacer(20),
               ],
