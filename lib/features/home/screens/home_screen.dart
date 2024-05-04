@@ -27,7 +27,9 @@ import 'package:hostel_management/theme/text_theme.dart';
 import 'package:hostel_management/widgets/category_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:hostel_management/features/preferences/menu_preference.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,6 +41,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User? studentInfoModel;
   AuthService authService = AuthService();
+  late bool isWithinTimeFrame;
 
   void fetchUserData(context) async {
     print("fetched data context: $context");
@@ -64,10 +67,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void checkTimeFrame(context) async {
+    bool flag = await authService.checkTimeFrame(context);
+    setState(() {
+      isWithinTimeFrame = flag;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     fetchUserData(context);
+    checkTimeFrame(context);
   }
 
   @override
@@ -127,7 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: const ShapeDecoration(
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 2, color: Color(0xFF007B3B)),
+                          side: BorderSide(
+                              width: 2, color: Color.fromARGB(255, 0, 123, 59)),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30),
                             topRight: Radius.circular(30),
@@ -284,14 +296,49 @@ class _HomeScreenState extends State<HomeScreen> {
                           category: 'Mark\nAttendence',
                           image: AppConstants.faceImage,
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (context) => MyHomePage(
-                                  title: "Face Authorization",
-                                ),
-                              ),
-                            );
+                            checkTimeFrame(context);
+                            isWithinTimeFrame
+                                ? Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => MyHomePage(
+                                        title: "Face Authorization",
+                                      ),
+                                    ),
+                                  )
+                                : Fluttertoast.showToast(
+                                    msg:
+                                        "Attendance can only be marked between 9.00 PM to 9.30 PM IST",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                          },
+                        ),
+                        CategoryCard(
+                          category: 'Menu\nPreference',
+                          image: AppConstants.menuFood,
+                          onTap: () {
+                            checkTimeFrame(context);
+                            isWithinTimeFrame
+                                ? Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>
+                                          const MessMenuPage(),
+                                    ),
+                                  )
+                                : Fluttertoast.showToast(
+                                    msg:
+                                        "Food preference can only be selected between 9.00 PM to 9.30 PM IST",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
                           },
                         ),
                       ],

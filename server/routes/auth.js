@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/user");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { DateTime, Interval } = require("luxon");
 
 const authRouter = express.Router();
 
@@ -85,5 +86,32 @@ authRouter.post("/api/signin", async (req, res) => {
     res.status(500).json({ Error: e.message });
   }
 });
+
+const checkTimeFrame = (req, res, next) => {
+  const userTimeZone = "Asia/Kolkata"; // Get user time zone from request header (optional)
+  const currentTime = DateTime.local().setZone(userTimeZone);
+
+  const startTime = DateTime.fromFormat("12:00", "HH:mm", {
+    zone: "Asia/Kolkata",
+  });
+  const endTime = DateTime.fromFormat("16:30", "HH:mm", {
+    zone: "Asia/Kolkata",
+  });
+  const interval = Interval.fromDateTimes(startTime, endTime);
+
+  if (interval.contains(currentTime)) {
+    res.json({
+      allowed: true,
+      message: "Access allowed within specified time frame",
+    });
+  } else {
+    res.json({
+      allowed: false,
+      message: "Access not allowed outside of specified time frame",
+    });
+  }
+};
+
+authRouter.get("/api/checkTimeFrame", checkTimeFrame);
 
 module.exports = authRouter;

@@ -75,6 +75,14 @@ const userSchema = mongoose.Schema({
     default: "",
   },
   attendance: [{ type: Date }],
+  preferences: {
+    type: [
+      {
+        date: { type: Date },
+        preference: { type: Boolean },
+      },
+    ], // Default to an empty array
+  },
 });
 const User = mongoose.model("User", userSchema);
 module.exports = User;

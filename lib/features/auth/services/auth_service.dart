@@ -106,6 +106,14 @@ class AuthService {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
+      final DateTime now = DateTime.now(); // Get current local time
+
+      // Calculate desired UTC time with 5:30 offset
+      final desiredUtcTime = now
+          .add(const Duration(hours: 5, minutes: 30))
+          .toUtc(); // Adjust hours and minutes as needed
+
+      final String dateTimeString = desiredUtcTime.toIso8601String();
       print("Token in addAttendance $token");
       http.Response res = await http.post(
         Uri.parse('$uri/api/addAttendance'),
@@ -113,7 +121,46 @@ class AuthService {
           'Authorization': token!,
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({"dateTime": DateTime.now().toIso8601String()}),
+        body: jsonEncode({"dateTime": dateTimeString}),
+      );
+
+      if (res.statusCode == 200) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
+
+        // Attendance added successfully
+        print("Attendance added successfully");
+      } else {
+        // Handle error
+        print("Failed to add attendance: ${res.body}");
+      }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  void addPreference(BuildContext context, bool preference) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+      final DateTime now = DateTime.now(); // Get current local time
+
+      // Calculate desired UTC time with 5:30 offset
+      final desiredUtcTime = now
+          .add(const Duration(hours: 29, minutes: 30))
+          .toUtc(); // Adjust hours and minutes as needed
+
+      final List<String> dateTimeString =
+          desiredUtcTime.toIso8601String().split('T');
+      print("Date time is ${dateTimeString[0]}");
+      print("Token in addAttendance $token");
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/updatePreference'),
+        headers: <String, String>{
+          'Authorization': token!,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"date": dateTimeString[0], "preference": preference}),
       );
 
       if (res.statusCode == 200) {
@@ -173,6 +220,17 @@ class AuthService {
       return token != null && token.isNotEmpty;
     } catch (e) {
       print(e);
+      return false;
+    }
+  }
+
+  Future<bool> checkTimeFrame(BuildContext context) async {
+    try {
+      http.Response res = await http.get(Uri.parse('$uri/api/checkTimeFrame'));
+      final Map<String, dynamic> responseData = jsonDecode(res.body);
+      return responseData['allowed'];
+    } catch (e) {
+      showSnackBar(context, e.toString());
       return false;
     }
   }

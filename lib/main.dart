@@ -34,13 +34,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    checkUserLoggedIn().then((value) => setState(() => isLoggedIn = value));
-    ;
+    checkUserLoggedIn();
+
     // authService.getUserData(context);
   }
 
   Future<bool> checkUserLoggedIn() async {
-    isLoggedIn = await authService.isUserLoggedIn(context);
+    bool value = await authService.isUserLoggedIn(context);
+    setState(() {
+      isLoggedIn = value;
+    });
     return isLoggedIn;
   }
 

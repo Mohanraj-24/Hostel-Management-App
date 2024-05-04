@@ -35,14 +35,26 @@
 # Content-Type: application/json
 
 
-POST http://10.16.49.119:3000/api/addAttendance
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xsTm8iOiIyMDIxMTAzNTYyIiwiaWF0IjoxNzE0NTAyOTAxfQ.LF-2HMz8H0DZK-ekn89jClx4X8DWxKUahqGhR_NURgU
+# POST http://10.16.49.119:3000/api/addAttendance
+# Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xsTm8iOiIyMDIxMTAzNTYyIiwiaWF0IjoxNzE0NTAyOTAxfQ.LF-2HMz8H0DZK-ekn89jClx4X8DWxKUahqGhR_NURgU
+# Content-Type: application/json
+
+# {
+#     "dateTime": "2024-05-01T08:00:00Z"
+# }
+
+# GET http://localhost:3000/api/checkTimeFrame
+
+
+POST http://10.16.49.119:3000/api/updatePreference
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xsTm8iOiIyMDIxMTAzNTYyIiwiaWF0IjoxNzE0NTU1MTU2fQ.CGmjyGubynFTKld9yc-pnCMIe4n5EQ4dk9AECDwTY6E
 Content-Type: application/json
 
 {
-    "dateTime": "2024-05-01T08:00:00Z"
+  
+  "date": "2024-05-02",
+  "preference": false
+
 }
-
-
 
 
